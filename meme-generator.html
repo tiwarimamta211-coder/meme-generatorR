@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Meme Generator – Create & Download Memes Free</title>
+  <meta name="description" content="Free online meme generator. Add top/bottom text, pick font size and color, upload your image, and download your meme instantly."/>
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ─── RESET & VARIABLES ─────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0d14;
+      --surface:   #16161f;
+      --card:      #1e1e2e;
+      --border:    #2e2e42;
+      --accent:    #f72585;
+      --accent2:   #7209b7;
+      --accent3:   #4cc9f0;
+      --text:      #e8e8f0;
+      --muted:     #7a7a9a;
+      --radius:    14px;
+      --shadow:    0 8px 32px rgba(0,0,0,0.45);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── ANIMATED BG ───────────────────────────────────────── */
+    body::before {
+      content:'';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 80% 10%, rgba(114,9,183,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 35% at 10% 80%, rgba(247,37,133,.14) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── HEADER ────────────────────────────────────────────── */
+    header {
+      position: relative; z-index: 10;
+      text-align: center;
+      padding: 36px 20px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    header h1 {
+      font-family: 'Bangers', cursive;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      letter-spacing: 3px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent3) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+    }
+    header p {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: .95rem;
+      font-weight: 600;
+    }
+
+    /* ─── ADS ───────────────────────────────────────────────── */
+    .ad-banner {
+      text-align: center;
+      padding: 10px 0;
+      background: rgba(255,255,255,.02);
+      border-bottom: 1px solid var(--border);
+      position: relative; z-index: 10;
+    }
+    .ad-banner ins { display: block; margin: 0 auto; }
+    .ad-label {
+      font-size: .68rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ─── LAYOUT ────────────────────────────────────────────── */
+    .wrapper {
+      position: relative; z-index: 5;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 16px 60px;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media(max-width:860px){
+      .wrapper { grid-template-columns: 1fr; }
+    }
+
+    /* ─── PANEL (controls) ──────────────────────────────────── */
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .section-title {
+      font-size: .72rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .field input[type=text],
+    .field input[type=number],
+    .field select,
+    .field textarea {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      font-size: .9rem;
+      padding: 9px 12px;
+      transition: border-color .2s;
+      outline: none;
+      width: 100%;
+      resize: none;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--accent3);
+    }
+
+    /* ─── ROW (inline fields) ───────────────────────────────── */
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+    /* ─── COLOR SWATCH ──────────────────────────────────────── */
+    .color-wrap {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .color-wrap input[type=color] {
+      width: 40px; height: 40px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: none;
+      cursor: pointer;
+      padding: 2px;
+      flex-shrink: 0;
+    }
+    .color-hex {
+      flex: 1;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      font-size: .9rem;
+      padding: 9px 12px;
+      outline: none;
+    }
+    .color-hex:focus { border-color: var(--accent3); }
+
+    /* ─── SLIDER ────────────────────────────────────────────── */
+    .slider-wrap { display: flex; align-items: center; gap: 10px; }
+    .slider-wrap input[type=range] {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 5px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--accent) var(--val,50%), var(--border) var(--val,50%));
+      outline: none;
+      cursor: pointer;
+    }
+    .slider-wrap input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--accent3);
+      box-shadow: 0 0 6px rgba(76,201,240,.6);
+      cursor: pointer;
+    }
+    .slider-val {
+      min-width: 36px;
+      text-align: center;
+      font-weight: 700;
+      font-size: .9rem;
+      color: var(--accent3);
+    }
+
+    /* ─── UPLOAD ────────────────────────────────────────────── */
+    .upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 26px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      position: relative;
+    }
+    .upload-area:hover, .upload-area.drag { border-color: var(--accent); background: rgba(247,37,133,.06); }
+    .upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+    .upload-icon { font-size: 2rem; margin-bottom: 6px; }
+    .upload-area p { font-size: .82rem; color: var(--muted); font-weight: 700; }
+    .upload-area span { color: var(--accent3); }
+
+    /* ─── TOGGLE ────────────────────────────────────────────── */
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; }
+    .toggle-label { font-size: .82rem; font-weight: 700; color: var(--muted); }
+    .toggle {
+      position: relative; width: 42px; height: 24px;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle .knob {
+      position: absolute; inset: 0;
+      background: var(--border);
+      border-radius: 24px;
+      cursor: pointer;
+      transition: background .25s;
+    }
+    .toggle .knob::before {
+      content:'';
+      position: absolute;
+      left: 3px; top: 3px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      transition: transform .25s;
+    }
+    .toggle input:checked + .knob { background: var(--accent3); }
+    .toggle input:checked + .knob::before { transform: translateX(18px); }
+
+    /* ─── BUTTONS ───────────────────────────────────────────── */
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 11px 18px;
+      border: none; border-radius: 10px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 900; font-size: .92rem;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+      text-decoration: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-accent {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(247,37,133,.35);
+    }
+    .btn-accent:hover { box-shadow: 0 6px 28px rgba(247,37,133,.5); }
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--border);
+      color: var(--text);
+    }
+    .btn-outline:hover { border-color: var(--accent3); color: var(--accent3); }
+    .btn-save {
+      background: linear-gradient(135deg, #06d6a0, #118ab2);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(6,214,160,.3);
+      font-size: 1rem;
+      padding: 13px;
+      width: 100%;
+    }
+    .btn-save:hover { box-shadow: 0 6px 28px rgba(6,214,160,.45); }
+    .btn-group { display: flex; gap: 10px; }
+    .btn-group .btn { flex: 1; }
+
+    /* ─── DIVIDER ───────────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2px 0;
+    }
+
+    /* ─── PREVIEW AREA ──────────────────────────────────────── */
+    .preview-col { display: flex; flex-direction: column; gap: 18px; }
+
+    .canvas-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    .canvas-card h2 {
+      font-family: 'Bangers', cursive;
+      font-size: 1.3rem;
+      letter-spacing: 1.5px;
+      color: var(--accent3);
+      margin-bottom: 14px;
+    }
+
+    #memeCanvas {
+      display: block;
+      max-width: 100%;
+      border-radius: 10px;
+      border: 2px solid var(--border);
+      background: #111;
+      cursor: crosshair;
+      margin: 0 auto;
+    }
+
+    .canvas-placeholder {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 10px;
+      min-height: 300px;
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      font-size: .9rem;
+      font-weight: 700;
+    }
+    .canvas-placeholder span { font-size: 3rem; }
+
+    /* ─── MEME TEMPLATES ────────────────────────────────────── */
+    .templates-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    .templates-card h2 {
+      font-family: 'Bangers', cursive;
+      font-size: 1.3rem;
+      letter-spacing: 1.5px;
+      color: var(--accent3);
+      margin-bottom: 14px;
+    }
+    .templates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 10px;
+    }
+    .tpl-btn {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 6px;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Nunito', sans-serif;
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--muted);
+      transition: border-color .2s, color .2s, background .2s;
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+    }
+    .tpl-btn:hover { border-color: var(--accent); color: var(--text); background: rgba(247,37,133,.08); }
+    .tpl-btn .tpl-icon { font-size: 1.6rem; }
+
+    /* ─── AD SIDEBAR ────────────────────────────────────────── */
+    .ad-side {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      text-align: center;
+    }
+
+    /* ─── TIPS ──────────────────────────────────────────────── */
+    .tips-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+    .tips-card h3 { font-size: .85rem; font-weight: 900; color: var(--accent); margin-bottom: 10px; letter-spacing: 1px; text-transform: uppercase; }
+    .tips-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .tips-list li {
+      font-size: .82rem;
+      color: var(--muted);
+      padding-left: 18px;
+      position: relative;
+    }
+    .tips-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent3); font-weight: 900; }
+
+    /* ─── FOOTER ────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 22px 16px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .8rem;
+      position: relative; z-index: 10;
+    }
+
+    /* ─── TOAST ─────────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: linear-gradient(135deg, #06d6a0, #118ab2);
+      color: #fff;
+      font-weight: 700;
+      font-size: .9rem;
+      padding: 12px 26px;
+      border-radius: 50px;
+      box-shadow: 0 6px 24px rgba(0,0,0,.4);
+      z-index: 9999;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1), opacity .35s;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    /* ─── SCROLLBAR ─────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- ══ HEADER ═══════════════════════════════════════════════ -->
+<header>
+  <h1>🎭 Meme Generator</h1>
+  <p>Upload · Customize · Download — 100% Free & Instant</p>
+</header>
+
+<!-- ══ TOP AD ════════════════════════════════════════════════ -->
+<div class="ad-banner">
+  <p class="ad-label">Advertisement</p>
+  <ins class="adsbygoogle"
+       style="display:block; height:90px; max-width:728px; width:100%;"
+       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="1111111111"
+       data-ad-format="horizontal"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+
+<!-- ══ MAIN WRAPPER ══════════════════════════════════════════ -->
+<div class="wrapper">
+
+  <!-- ── LEFT: CONTROLS ──────────────────────────────────── -->
+  <aside class="panel" role="complementary" aria-label="Meme Controls">
+
+    <!-- IMAGE UPLOAD -->
+    <div>
+      <p class="section-title">📁 Image</p>
+      <div class="upload-area" id="dropZone">
+        <input type="file" id="imageUpload" accept="image/*" aria-label="Upload meme image"/>
+        <div class="upload-icon">🖼️</div>
+        <p>Drag & drop or <span>browse</span></p>
+        <p style="margin-top:4px;font-size:.74rem;">PNG, JPG, GIF, WEBP</p>
+      </div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- TOP TEXT -->
+    <div>
+      <p class="section-title">✏️ Top Text</p>
+      <div class="field">
+        <label for="topText">Text</label>
+        <textarea id="topText" rows="2" placeholder="ONE DOES NOT SIMPLY…"></textarea>
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <div class="field">
+          <label>Font Size</label>
+          <div class="slider-wrap">
+            <input type="range" id="topSize" min="12" max="120" value="48" style="--val:37%"/>
+            <span class="slider-val" id="topSizeVal">48</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Color</label>
+          <div class="color-wrap">
+            <input type="color" id="topColor" value="#ffffff"/>
+            <input type="text" class="color-hex" id="topColorHex" value="#ffffff" maxlength="7"/>
+          </div>
+        </div>
+      </div>
+      <div class="row3" style="margin-top:10px;">
+        <div class="field">
+          <label>Font</label>
+          <select id="topFont">
+            <option value="Bangers">Bangers</option>
+            <option value="Impact">Impact</option>
+            <option value="Arial Black">Arial Black</option>
+            <option value="Comic Sans MS">Comic Sans</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Courier New">Courier New</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Align</label>
+          <select id="topAlign">
+            <option value="center">Center</option>
+            <option value="left">Left</option>
+            <option value="right">Right</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Style</label>
+          <select id="topStyle">
+            <option value="fill">Fill</option>
+            <option value="stroke">Stroke</option>
+            <option value="both">Both</option>
+          </select>
+        </div>
+      </div>
+      <div class="toggle-row" style="margin-top:10px;">
+        <span class="toggle-label">Outline / Shadow</span>
+        <label class="toggle"><input type="checkbox" id="topOutline" checked/><span class="knob"></span></label>
+      </div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- BOTTOM TEXT -->
+    <div>
+      <p class="section-title">✏️ Bottom Text</p>
+      <div class="field">
+        <label for="botText">Text</label>
+        <textarea id="botText" rows="2" placeholder="EVERYWHERE"></textarea>
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <div class="field">
+          <label>Font Size</label>
+          <div class="slider-wrap">
+            <input type="range" id="botSize" min="12" max="120" value="48" style="--val:37%"/>
+            <span class="slider-val" id="botSizeVal">48</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Color</label>
+          <div class="color-wrap">
+            <input type="color" id="botColor" value="#ffffff"/>
+            <input type="text" class="color-hex" id="botColorHex" value="#ffffff" maxlength="7"/>
+          </div>
+        </div>
+      </div>
+      <div class="row3" style="margin-top:10px;">
+        <div class="field">
+          <label>Font</label>
+          <select id="botFont">
+            <option value="Bangers">Bangers</option>
+            <option value="Impact">Impact</option>
+            <option value="Arial Black">Arial Black</option>
+            <option value="Comic Sans MS">Comic Sans</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Courier New">Courier New</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Align</label>
+          <select id="botAlign">
+            <option value="center">Center</option>
+            <option value="left">Left</option>
+            <option value="right">Right</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Style</label>
+          <select id="botStyle">
+            <option value="fill">Fill</option>
+            <option value="stroke">Stroke</option>
+            <option value="both">Both</option>
+          </select>
+        </div>
+      </div>
+      <div class="toggle-row" style="margin-top:10px;">
+        <span class="toggle-label">Outline / Shadow</span>
+        <label class="toggle"><input type="checkbox" id="botOutline" checked/><span class="knob"></span></label>
+      </div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- IMAGE ADJUSTMENTS -->
+    <div>
+      <p class="section-title">🎨 Adjustments</p>
+      <div class="field">
+        <label>Brightness</label>
+        <div class="slider-wrap">
+          <input type="range" id="brightness" min="0" max="200" value="100" style="--val:50%"/>
+          <span class="slider-val" id="brightnessVal">100</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Contrast</label>
+        <div class="slider-wrap">
+          <input type="range" id="contrast" min="0" max="200" value="100" style="--val:50%"/>
+          <span class="slider-val" id="contrastVal">100</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Saturation</label>
+        <div class="slider-wrap">
+          <input type="range" id="saturation" min="0" max="200" value="100" style="--val:50%"/>
+          <span class="slider-val" id="saturationVal">100</span>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- ACTION BUTTONS -->
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="btn-group">
+        <button class="btn btn-outline" id="resetBtn">🔄 Reset</button>
+        <button class="btn btn-outline" id="clearTextBtn">🗑️ Clear Text</button>
+      </div>
+      <button class="btn btn-save" id="saveBtn">💾 Save Meme</button>
+    </div>
+
+  </aside>
+
+  <!-- ── RIGHT: PREVIEW ──────────────────────────────────── -->
+  <div class="preview-col">
+
+    <!-- Canvas Preview -->
+    <div class="canvas-card">
+      <h2>🎭 Preview</h2>
+      <div id="canvasWrapper">
+        <div class="canvas-placeholder" id="placeholder">
+          <span>🖼️</span>
+          <p>Upload an image or pick a template below to get started</p>
+        </div>
+        <canvas id="memeCanvas" style="display:none;"></canvas>
+      </div>
+    </div>
+
+    <!-- Mid Ad -->
+    <div class="ad-side">
+      <p class="ad-label">Advertisement</p>
+      <ins class="adsbygoogle"
+           style="display:block; min-height:250px;"
+           data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+           data-ad-slot="2222222222"
+           data-ad-format="rectangle"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- Meme Templates -->
+    <div class="templates-card">
+      <h2>⚡ Quick Templates</h2>
+      <div class="templates-grid" id="templatesGrid">
+        <!-- injected by JS -->
+      </div>
+    </div>
+
+    <!-- Tips -->
+    <div class="tips-card">
+      <h3>💡 Pro Tips</h3>
+      <ul class="tips-list">
+        <li>Use <strong>Impact / Bangers</strong> font for that classic meme look.</li>
+        <li>Enable <strong>Outline</strong> for white text on busy images.</li>
+        <li>Try <strong>Brightness ↓</strong> to make text pop on bright photos.</li>
+        <li>Saved meme is PNG — perfect for sharing on all platforms.</li>
+        <li>Drag & drop an image directly onto the upload area.</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ BOTTOM AD ═════════════════════════════════════════════ -->
+<div class="ad-banner" style="border-top:1px solid var(--border); border-bottom:none;">
+  <p class="ad-label">Advertisement</p>
+  <ins class="adsbygoogle"
+       style="display:block; height:90px; max-width:728px; width:100%;"
+       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="3333333333"
+       data-ad-format="horizontal"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+
+<!-- ══ FOOTER ════════════════════════════════════════════════ -->
+<footer>
+  <p>© 2025 Meme Generator · Free Online Meme Maker · No Watermarks</p>
+</footer>
+
+<!-- ══ TOAST ═════════════════════════════════════════════════ -->
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!-- ══ JAVASCRIPT ════════════════════════════════════════════ -->
+<script>
+/* ─────────── TEMPLATE DATA ──────────────────────────────── */
+const TEMPLATES = [
+  { name: "Drake", emoji: "🎤", color: "#7B2D8B", top: "Using old tools", bot: "This meme generator" },
+  { name: "Distracted BF", emoji: "👀", color: "#E63946", top: "Me", bot: "New meme formats" },
+  { name: "Two Buttons", emoji: "😤", color: "#2196F3", top: "Panic", bot: "Also panic" },
+  { name: "Uno Reverse", emoji: "🃏", color: "#FF9800", top: "", bot: "No u" },
+  { name: "Expanding Brain", emoji: "🧠", color: "#4CAF50", top: "Big brain time", bot: "" },
+  { name: "Surprised Pikachu", emoji: "⚡", color: "#FFD600", top: "Does something", bot: "😲" },
+  { name: "Change My Mind", emoji: "💪", color: "#795548", top: "Memes are art", bot: "Change my mind" },
+  { name: "This Is Fine", emoji: "🔥", color: "#FF5722", top: "Everything is fine", bot: "🔥🐕🔥" },
+];
+
+/* ─────────── STATE ──────────────────────────────────────── */
+let currentImage = null;
+
+/* ─────────── DOM REFS ───────────────────────────────────── */
+const canvas      = document.getElementById('memeCanvas');
+const ctx         = canvas.getContext('2d');
+const placeholder = document.getElementById('placeholder');
+const imageUpload = document.getElementById('imageUpload');
+const dropZone    = document.getElementById('dropZone');
+
+const topText     = document.getElementById('topText');
+const botText     = document.getElementById('botText');
+
+const topSize     = document.getElementById('topSize');
+const botSize     = document.getElementById('botSize');
+const topSizeVal  = document.getElementById('topSizeVal');
+const botSizeVal  = document.getElementById('botSizeVal');
+
+const topColor    = document.getElementById('topColor');
+const botColor    = document.getElementById('botColor');
+const topColorHex = document.getElementById('topColorHex');
+const botColorHex = document.getElementById('botColorHex');
+
+const topFont     = document.getElementById('topFont');
+const botFont     = document.getElementById('botFont');
+const topAlign    = document.getElementById('topAlign');
+const botAlign    = document.getElementById('botAlign');
+const topStyle    = document.getElementById('topStyle');
+const botStyle    = document.getElementById('botStyle');
+const topOutline  = document.getElementById('topOutline');
+const botOutline  = document.getElementById('botOutline');
+
+const brightness  = document.getElementById('brightness');
+const contrast    = document.getElementById('contrast');
+const saturation  = document.getElementById('saturation');
+const brightnessVal = document.getElementById('brightnessVal');
+const contrastVal   = document.getElementById('contrastVal');
+const saturationVal = document.getElementById('saturationVal');
+
+const saveBtn     = document.getElementById('saveBtn');
+const resetBtn    = document.getElementById('resetBtn');
+const clearTextBtn= document.getElementById('clearTextBtn');
+
+/* ─────────── TEMPLATES ──────────────────────────────────── */
+const grid = document.getElementById('templatesGrid');
+TEMPLATES.forEach((t, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'tpl-btn';
+  btn.innerHTML = `<span class="tpl-icon">${t.emoji}</span>${t.name}`;
+  btn.title = t.name;
+  btn.addEventListener('click', () => loadTemplate(t));
+  grid.appendChild(btn);
+});
+
+function loadTemplate(t) {
+  // Generate a colored placeholder canvas image
+  const tmpCanvas = document.createElement('canvas');
+  tmpCanvas.width = 600; tmpCanvas.height = 500;
+  const tmpCtx = tmpCanvas.getContext('2d');
+
+  // Gradient background
+  const grad = tmpCtx.createLinearGradient(0, 0, 600, 500);
+  grad.addColorStop(0, t.color);
+  grad.addColorStop(1, '#0d0d14');
+  tmpCtx.fillStyle = grad;
+  tmpCtx.fillRect(0, 0, 600, 500);
+
+  // Emoji watermark
+  tmpCtx.font = '160px serif';
+  tmpCtx.textAlign = 'center';
+  tmpCtx.textBaseline = 'middle';
+  tmpCtx.globalAlpha = 0.35;
+  tmpCtx.fillText(t.emoji, 300, 250);
+  tmpCtx.globalAlpha = 1;
+
+  // Template name
+  tmpCtx.fillStyle = 'rgba(255,255,255,0.15)';
+  tmpCtx.font = 'bold 22px sans-serif';
+  tmpCtx.fillText(t.name, 300, 460);
+
+  const img = new Image();
+  img.src = tmpCanvas.toDataURL();
+  img.onload = () => {
+    currentImage = img;
+    topText.value = t.top;
+    botText.value  = t.bot;
+    showCanvas();
+    drawMeme();
+    showToast(`"${t.name}" template loaded!`);
+  };
+}
+
+/* ─────────── SHOW / HIDE CANVAS ────────────────────────── */
+function showCanvas() {
+  placeholder.style.display = 'none';
+  canvas.style.display = 'block';
+}
+
+/* ─────────── DRAW MEME ──────────────────────────────────── */
+function drawMeme() {
+  if (!currentImage) return;
+
+  const maxW = canvas.parentElement.clientWidth - 4;
+  const scale = Math.min(1, maxW / currentImage.naturalWidth);
+  canvas.width  = currentImage.naturalWidth  * scale;
+  canvas.height = currentImage.naturalHeight * scale;
+
+  // Image with CSS filters via offscreen approach
+  ctx.filter = `brightness(${brightness.value}%) contrast(${contrast.value}%) saturate(${saturation.value}%)`;
+  ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
+  ctx.filter = 'none';
+
+  drawText(topText.value,  'top');
+  drawText(botText.value, 'bot');
+}
+
+function drawText(text, position) {
+  if (!text.trim()) return;
+
+  const isTop = position === 'top';
+  const size  = parseInt(isTop ? topSize.value : botSize.value);
+  const color = isTop ? topColor.value : botColor.value;
+  const font  = isTop ? topFont.value  : botFont.value;
+  const align = isTop ? topAlign.value : botAlign.value;
+  const style = isTop ? topStyle.value : botStyle.value;
+  const outline = isTop ? topOutline.checked : botOutline.checked;
+
+  ctx.font = `900 ${size}px "${font}", Impact, Arial Black, sans-serif`;
+  ctx.textAlign = align;
+  ctx.textBaseline = isTop ? 'top' : 'bottom';
+  ctx.lineJoin = 'round';
+
+  const maxWidth = canvas.width * 0.92;
+  const padding  = size * 0.3;
+  const lines    = wrapText(ctx, text.toUpperCase(), maxWidth);
+
+  const x = align === 'center' ? canvas.width / 2
+           : align === 'left'  ? canvas.width * 0.04
+           :                     canvas.width * 0.96;
+
+  const lineH = size * 1.15;
+  const totalH = lines.length * lineH;
+
+  const yStart = isTop
+    ? padding
+    : canvas.height - padding - totalH + lineH;
+
+  lines.forEach((line, i) => {
+    const y = yStart + i * lineH;
+
+    if (outline) {
+      ctx.shadowColor   = 'rgba(0,0,0,0.8)';
+      ctx.shadowBlur    = size * 0.15;
+      ctx.shadowOffsetX = size * 0.04;
+      ctx.shadowOffsetY = size * 0.04;
+    }
+
+    if (style === 'stroke' || style === 'both') {
+      ctx.strokeStyle = 'rgba(0,0,0,0.9)';
+      ctx.lineWidth   = size * 0.12;
+      ctx.strokeText(line, x, y);
+    }
+
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur  = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+
+    if (style === 'fill' || style === 'both') {
+      ctx.fillStyle = color;
+      ctx.fillText(line, x, y);
+    } else if (style === 'stroke') {
+      ctx.fillStyle = color;
+      ctx.fillText(line, x, y);
+    }
+  });
+}
+
+function wrapText(ctx, text, maxWidth) {
+  const words = text.split(' ');
+  const lines = [];
+  let current = '';
+
+  for (const word of words) {
+    const test = current ? current + ' ' + word : word;
+    if (ctx.measureText(test).width > maxWidth && current) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = test;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
+}
+
+/* ─────────── IMAGE UPLOAD ───────────────────────────────── */
+imageUpload.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) loadFile(file);
+});
+
+function loadFile(file) {
+  if (!file.type.startsWith('image/')) { showToast('⚠️ Please upload an image file.'); return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      currentImage = img;
+      showCanvas();
+      drawMeme();
+      showToast('✅ Image loaded!');
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ─────────── DRAG & DROP ────────────────────────────────── */
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file) loadFile(file);
+});
+
+/* ─────────── SLIDERS ────────────────────────────────────── */
+function bindSlider(slider, valEl) {
+  function update() {
+    const pct = ((slider.value - slider.min) / (slider.max - slider.min) * 100).toFixed(0);
+    slider.style.setProperty('--val', pct + '%');
+    valEl.textContent = slider.value;
+    drawMeme();
+  }
+  slider.addEventListener('input', update);
+  update();
+}
+bindSlider(topSize, topSizeVal);
+bindSlider(botSize, botSizeVal);
+bindSlider(brightness, brightnessVal);
+bindSlider(contrast, contrastVal);
+bindSlider(saturation, saturationVal);
+
+/* ─────────── COLOR PICKERS ──────────────────────────────── */
+function bindColor(picker, hex) {
+  picker.addEventListener('input', () => { hex.value = picker.value; drawMeme(); });
+  hex.addEventListener('input', () => {
+    if (/^#[0-9a-fA-F]{6}$/.test(hex.value)) { picker.value = hex.value; drawMeme(); }
+  });
+}
+bindColor(topColor, topColorHex);
+bindColor(botColor, botColorHex);
+
+/* ─────────── ALL CONTROLS REDRAW ───────────────────────── */
+[topText, botText, topFont, botFont, topAlign, botAlign,
+ topStyle, botStyle, topOutline, botOutline].forEach(el => {
+  el.addEventListener('input', drawMeme);
+  el.addEventListener('change', drawMeme);
+});
+
+/* ─────────── SAVE MEME ──────────────────────────────────── */
+saveBtn.addEventListener('click', () => {
+  if (!currentImage) { showToast('⚠️ Please upload an image first!'); return; }
+  drawMeme();
+  const link = document.createElement('a');
+  link.download = 'meme-' + Date.now() + '.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+  showToast('🎉 Meme saved!');
+});
+
+/* ─────────── RESET ──────────────────────────────────────── */
+resetBtn.addEventListener('click', () => {
+  brightness.value = 100; contrast.value = 100; saturation.value = 100;
+  topSize.value = 48; botSize.value = 48;
+  topColor.value = '#ffffff'; topColorHex.value = '#ffffff';
+  botColor.value = '#ffffff'; botColorHex.value = '#ffffff';
+  topOutline.checked = true; botOutline.checked = true;
+  topStyle.value = 'fill'; botStyle.value = 'fill';
+  topAlign.value = 'center'; botAlign.value = 'center';
+  topFont.value = 'Bangers'; botFont.value = 'Bangers';
+  ['topSize','botSize','brightness','contrast','saturation'].forEach(id => {
+    const sl = document.getElementById(id);
+    const pct = ((sl.value - sl.min) / (sl.max - sl.min) * 100).toFixed(0);
+    sl.style.setProperty('--val', pct + '%');
+  });
+  brightnessVal.textContent = 100; contrastVal.textContent = 100; saturationVal.textContent = 100;
+  topSizeVal.textContent = 48; botSizeVal.textContent = 48;
+  drawMeme();
+  showToast('🔄 Settings reset!');
+});
+
+clearTextBtn.addEventListener('click', () => {
+  topText.value = ''; botText.value = '';
+  drawMeme();
+  showToast('🗑️ Text cleared!');
+});
+
+/* ─────────── TOAST ──────────────────────────────────────── */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ─────────── RESIZE REDRAW ──────────────────────────────── */
+window.addEventListener('resize', () => { if (currentImage) drawMeme(); });
+</script>
+</body>
+</html>
